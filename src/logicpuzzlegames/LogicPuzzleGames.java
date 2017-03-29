@@ -46,10 +46,9 @@ public class LogicPuzzleGames extends Application {
         
         Canvas canvas = new Canvas(500, 500);
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        Pane wrapperPane = new Pane();
-        wrapperPane.getChildren().add(canvas);
-        root.setCenter(wrapperPane);
+        root.setCenter(canvas);
         
+        /*
         GridPane GUIPane = new GridPane();
         GUIPane.setAlignment(Pos.TOP_LEFT);
         GUIPane.setVgap(5);
@@ -59,38 +58,20 @@ public class LogicPuzzleGames extends Application {
         GUIPane.add(new Button("test btn"), 0, 2);
         GUIPane.setGridLinesVisible(true);
         root.setRight(GUIPane);
-      
-        gc.setFill(Color.DEEPSKYBLUE);
-        gc.setStroke(Color.BLACK);
-        gc.fillRect(0, 0, 500, 500);
-
-
-        
-        for (int i = 90; i <= 360; i+=30) {
-            gc.strokeLine(90, i, 360, i);
-            gc.strokeLine(i, 90, i, 360);
-        }
-        
+        */
+        /*
         int num = 1;
         for (int i = 90; i < 360; i+=30) {
             for (int j = 90; j < 360; j+=30) {
                 gc.strokeText(Integer.toString(num), j+10, i+20);
                 num++;
             }
-        }
+        }*/
+        GameGrid game = new Minesweeper(gc, 9, 9);
         
-        canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
-            
-            @Override
-            public void handle(MouseEvent e) {
-                if (e.isPrimaryButtonDown() && e.getX() >=90 && e.getX() < 360 && e.getY() >=90 && e.getY() < 360) {
-                    gc.setFill(Color.WHITESMOKE);
-                    gc.fillRect(e.getX()-(e.getX()%30)+1, e.getY()-(e.getY()%30)+1, 29, 29);  
-                }
-                
-            }
-        });
-        
+        game.drawGameGrid();
+        game.setupMouseEventHandlers(canvas);
+               
         primaryStage.setTitle("Canvas test"); 
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
