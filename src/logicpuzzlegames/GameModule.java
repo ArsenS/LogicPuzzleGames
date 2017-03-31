@@ -8,7 +8,9 @@ package logicpuzzlegames;
 import javafx.scene.canvas.Canvas;
 
 
-public interface GameGrid {
+public interface GameModule {
+    
+    public void initializeGameGrid();
     
     public void drawGameGrid();
     

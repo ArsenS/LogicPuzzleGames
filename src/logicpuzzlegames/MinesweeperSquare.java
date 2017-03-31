@@ -50,6 +50,10 @@ public class MinesweeperSquare {
         this.flagged = true;
     }
     
+    public void unflagSquare() {
+        this.flagged = false;
+    }
+    
     public void incrementNumAdjacentMines() {
         this.numAdjacentMines++;
     }

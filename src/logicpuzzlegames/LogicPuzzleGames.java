@@ -6,21 +6,15 @@
 package logicpuzzlegames;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 /**
@@ -35,42 +29,70 @@ public class LogicPuzzleGames extends Application {
         //Group root = new Group();
         
         BorderPane root = new BorderPane();
-        root.setPrefSize(800, 600);
+        root.setPrefSize(400, 400);
         
         MenuBar menuBar = new MenuBar();
         Menu gameMenu = new Menu("Game");
-        MenuItem newGameMenuItem = new MenuItem("New game");
-        gameMenu.getItems().addAll(newGameMenuItem);
+        Menu minesweeperMenu = new Menu("New Minesweeper Game");
+        MenuItem newEasyMinesweeperGame = new MenuItem("Easy (9x9)");
+        MenuItem newMediumMinesweeperGame = new MenuItem("Medium (16x16)");
+        MenuItem newHardMinesweeperGame = new MenuItem("Hard (16x30)");
+        gameMenu.getItems().addAll(minesweeperMenu);
+        minesweeperMenu.getItems().addAll(newEasyMinesweeperGame, newMediumMinesweeperGame, newHardMinesweeperGame);
         menuBar.getMenus().add(gameMenu);
         root.setTop(menuBar);
         
-        Canvas canvas = new Canvas(500, 500);
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-        root.setCenter(canvas);
         
-        /*
-        GridPane GUIPane = new GridPane();
-        GUIPane.setAlignment(Pos.TOP_LEFT);
-        GUIPane.setVgap(5);
-        GUIPane.setPadding(new Insets(50, 25, 25, 25));
-        GUIPane.add(new Button("test btn"), 0, 0);
-        GUIPane.add(new Button("test btn"), 0, 1);
-        GUIPane.add(new Button("test btn"), 0, 2);
-        GUIPane.setGridLinesVisible(true);
-        root.setRight(GUIPane);
-        */
-        /*
-        int num = 1;
-        for (int i = 90; i < 360; i+=30) {
-            for (int j = 90; j < 360; j+=30) {
-                gc.strokeText(Integer.toString(num), j+10, i+20);
-                num++;
+        newEasyMinesweeperGame.setOnAction(new EventHandler<ActionEvent>() {
+            
+            @Override
+            public void handle(ActionEvent e) {
+                Canvas canvas = new Canvas(300, 300);
+                GraphicsContext gc = canvas.getGraphicsContext2D();
+                root.setCenter(canvas);
+                
+                GameModule game = new Minesweeper(gc, 9, 9);
+                game.initializeGameGrid();
+                game.drawGameGrid();
+                game.setupMouseEventHandlers(canvas);   
             }
-        }*/
-        GameGrid game = new Minesweeper(gc, 9, 9);
+        });
         
-        game.drawGameGrid();
-        game.setupMouseEventHandlers(canvas);
+        newMediumMinesweeperGame.setOnAction(new EventHandler<ActionEvent>() {
+            
+            @Override
+            public void handle(ActionEvent e) {
+                primaryStage.setWidth(600);
+                primaryStage.setHeight(600);
+                Canvas canvas = new Canvas(500, 500);
+                GraphicsContext gc = canvas.getGraphicsContext2D();
+                root.setCenter(canvas);
+                
+                GameModule game = new Minesweeper(gc, 16, 16);
+                game.initializeGameGrid();
+                game.drawGameGrid();
+                game.setupMouseEventHandlers(canvas);   
+            }
+        });
+                
+        newHardMinesweeperGame.setOnAction(new EventHandler<ActionEvent>() {
+            
+            @Override
+            public void handle(ActionEvent e) {
+                primaryStage.setWidth(950);
+                primaryStage.setHeight(600);
+                Canvas canvas = new Canvas(900, 500);
+                GraphicsContext gc = canvas.getGraphicsContext2D();
+                root.setCenter(canvas);
+                
+                GameModule game = new Minesweeper(gc, 30, 16);
+                game.initializeGameGrid();
+                game.drawGameGrid();
+                game.setupMouseEventHandlers(canvas);   
+            }
+        });
+        
+
                
         primaryStage.setTitle("Canvas test"); 
         primaryStage.setScene(new Scene(root));
