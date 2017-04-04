@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package logicpuzzlegames;
 
 import javafx.application.Application;
@@ -10,95 +5,90 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
-/**
- *
- * @author FLD
- */
+
 public class LogicPuzzleGames extends Application {
+    
+    Stage stage;
+    BorderPane root;
     
     @Override
     public void start(Stage primaryStage) {
         
-        //Group root = new Group();
-        
-        BorderPane root = new BorderPane();
+        stage = primaryStage;
+        root = new BorderPane();
         root.setPrefSize(400, 400);
         
+        
+        MenuBar menuBar = setupMenuBar();        
+        root.setTop(menuBar);
+
+        stage.setTitle("Logic Puzzle Games"); 
+        stage.setScene(new Scene(root));
+        stage.show();
+    }
+    
+    private MenuBar setupMenuBar() {
         MenuBar menuBar = new MenuBar();
         Menu gameMenu = new Menu("Game");
+        Menu minesweeperMenu = setupMinesweeperMenu();
+        MenuItem newSudokuGame = setupSudokuMenu();
+        gameMenu.getItems().addAll(minesweeperMenu, newSudokuGame);
+        menuBar.getMenus().add(gameMenu);
+        return menuBar;
+    }
+    
+    private Menu setupMinesweeperMenu() {
         Menu minesweeperMenu = new Menu("New Minesweeper Game");
         MenuItem newEasyMinesweeperGame = new MenuItem("Easy (9x9)");
+        setupMinesweeperMenuEventHandler(newEasyMinesweeperGame, 350, 350, 9, 9);
         MenuItem newMediumMinesweeperGame = new MenuItem("Medium (16x16)");
+        setupMinesweeperMenuEventHandler(newMediumMinesweeperGame, 550, 550, 16, 16);
         MenuItem newHardMinesweeperGame = new MenuItem("Hard (16x30)");
-        gameMenu.getItems().addAll(minesweeperMenu);
+        setupMinesweeperMenuEventHandler(newHardMinesweeperGame, 900, 600, 30, 16);
         minesweeperMenu.getItems().addAll(newEasyMinesweeperGame, newMediumMinesweeperGame, newHardMinesweeperGame);
-        menuBar.getMenus().add(gameMenu);
-        root.setTop(menuBar);
+        return minesweeperMenu;
+    }
         
-        
-        newEasyMinesweeperGame.setOnAction(new EventHandler<ActionEvent>() {
-            
-            @Override
-            public void handle(ActionEvent e) {
-                Canvas canvas = new Canvas(300, 300);
-                GraphicsContext gc = canvas.getGraphicsContext2D();
-                root.setCenter(canvas);
-                
-                GameModule game = new Minesweeper(gc, 9, 9);
-                game.initializeGameGrid();
-                game.drawGameGrid();
-                game.setupMouseEventHandlers(canvas);   
-            }
-        });
-        
-        newMediumMinesweeperGame.setOnAction(new EventHandler<ActionEvent>() {
-            
-            @Override
-            public void handle(ActionEvent e) {
-                primaryStage.setWidth(600);
-                primaryStage.setHeight(600);
-                Canvas canvas = new Canvas(500, 500);
-                GraphicsContext gc = canvas.getGraphicsContext2D();
-                root.setCenter(canvas);
-                
-                GameModule game = new Minesweeper(gc, 16, 16);
-                game.initializeGameGrid();
-                game.drawGameGrid();
-                game.setupMouseEventHandlers(canvas);   
-            }
-        });
-                
-        newHardMinesweeperGame.setOnAction(new EventHandler<ActionEvent>() {
-            
-            @Override
-            public void handle(ActionEvent e) {
-                primaryStage.setWidth(950);
-                primaryStage.setHeight(600);
-                Canvas canvas = new Canvas(900, 500);
-                GraphicsContext gc = canvas.getGraphicsContext2D();
-                root.setCenter(canvas);
-                
-                GameModule game = new Minesweeper(gc, 30, 16);
-                game.initializeGameGrid();
-                game.drawGameGrid();
-                game.setupMouseEventHandlers(canvas);   
-            }
-        });
-        
+    private void setupMinesweeperMenuEventHandler(MenuItem selectedGameDifficulty, int canvasWidth, int canvasHeight, int gameWidth, int gameHeight) {
+        selectedGameDifficulty.setOnAction(new EventHandler<ActionEvent>() {
 
-               
-        primaryStage.setTitle("Canvas test"); 
-        primaryStage.setScene(new Scene(root));
-        primaryStage.show();
+                @Override
+                public void handle(ActionEvent e) {
+                    resizeStage(canvasWidth+50, canvasHeight+50);
+                    Canvas canvas = new Canvas(canvasWidth, canvasHeight);
+                    root.setCenter(canvas);
+
+                    GameModule game = new Minesweeper(canvas, gameWidth, gameHeight);
+                    game.initializeGameGrid();
+                    game.drawGameGrid();
+                    game.setupEventHandlers();
+                    //game.solve();
+                }
+            });    
+    }
+    
+    private MenuItem setupSudokuMenu() {
+        MenuItem newSudokuGame = new MenuItem("New Sudoku Game");
+        setupSudokuMenuEventHandler();
+        return newSudokuGame;
     }
 
+    
+    private void setupSudokuMenuEventHandler() {
+        //TODO
+    }
+    
+    private void resizeStage(int width, int height) {
+        this.stage.setWidth(width);
+        this.stage.setHeight(height);
+    }
+    
     /**
      * @param args the command line arguments
      */

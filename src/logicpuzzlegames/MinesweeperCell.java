@@ -1,22 +1,14 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package logicpuzzlegames;
 
-/**
- *
- * @author FLD
- */
-public class MinesweeperSquare {
+
+public class MinesweeperCell {
     
     private boolean revealed = false;
     private boolean mined = false;
     private boolean flagged = false;
     private int numAdjacentMines = 0;
     
-    MinesweeperSquare() {};
+    MinesweeperCell() {};
     
     public boolean isRevealed() {
         return this.revealed;
@@ -34,23 +26,23 @@ public class MinesweeperSquare {
         return this.numAdjacentMines > 0;
     }
     
-    public int numAdjacentMines() {
+    public int getNumAdjacentMines() {
         return this.numAdjacentMines;
     }
     
-    public void revealSquare() {
+    public void revealCell() {
         this.revealed = true;
     }
     
-    public void mineSquare() {
+    public void mineCell() {
         this.mined = true;
     }
     
-    public void flagSquare() {
+    public void flagCell() {
         this.flagged = true;
     }
     
-    public void unflagSquare() {
+    public void unflagCell() {
         this.flagged = false;
     }
     
