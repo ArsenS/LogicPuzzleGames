@@ -5,10 +5,7 @@ public interface GameModule {
     
     public void initializeGameGrid();
     
-    public void drawGameGrid();
+    public void drawStartingGrid();
     
     public void setupEventHandlers();
-    
-    public void solve();
-
 }

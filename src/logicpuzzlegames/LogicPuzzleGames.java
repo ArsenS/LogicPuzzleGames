@@ -66,22 +66,42 @@ public class LogicPuzzleGames extends Application {
 
                     GameModule game = new Minesweeper(canvas, gameWidth, gameHeight);
                     game.initializeGameGrid();
-                    game.drawGameGrid();
+                    game.drawStartingGrid();
                     game.setupEventHandlers();
-                    //game.solve();
+                    //((Minesweeper)game).solve();
                 }
             });    
     }
     
     private MenuItem setupSudokuMenu() {
-        MenuItem newSudokuGame = new MenuItem("New Sudoku Game");
-        setupSudokuMenuEventHandler();
-        return newSudokuGame;
+        Menu sudokuMenu = new Menu("New Sudoku Game");
+        MenuItem newEasySudokuGame = new MenuItem("Easy");
+        MenuItem newMediumSudokuGame = new MenuItem("Medium");
+        MenuItem newHardSudokuGame = new MenuItem("Hard");
+        MenuItem newVeryHardSudokuGame = new MenuItem("Very Hard");
+        sudokuMenu.getItems().addAll(newEasySudokuGame, newMediumSudokuGame, newHardSudokuGame, newVeryHardSudokuGame);
+        setupSudokuMenuEventHandler(sudokuMenu);
+        return sudokuMenu;
     }
 
     
-    private void setupSudokuMenuEventHandler() {
-        //TODO
+    private void setupSudokuMenuEventHandler(MenuItem newSudokuGame) {
+        newSudokuGame.setOnAction(new EventHandler<ActionEvent>() {
+            
+            @Override
+            public void handle(ActionEvent e) {
+                resizeStage(400, 400);
+                Canvas canvas = new Canvas(350, 350);
+                root.setCenter(canvas);
+                
+                String test = "379000014060010070080009005435007000090040020000800436900700080040080050850000249";
+                System.out.println(test.length());
+                GameModule game = new Sudoku(canvas, test);
+                game.initializeGameGrid();
+                game.drawStartingGrid();
+                //game.setupEventHandlers();
+            }
+        });
     }
     
     private void resizeStage(int width, int height) {

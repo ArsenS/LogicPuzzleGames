@@ -21,12 +21,12 @@ public class Minesweeper implements GameModule {
     final int WIDTH, HEIGHT;
     
     
-    Canvas canvas;
-    GraphicsContext gc;
-    EventHandler<MouseEvent> handler;
-    MinesweeperCell[][] gameGrid;
-    ArrayList<MinesweeperCell> mines = new ArrayList<>();
-    boolean firstMove = true;
+    private Canvas canvas;
+    private GraphicsContext gc;
+    private EventHandler<MouseEvent> handler;
+    private MinesweeperCell[][] gameGrid;
+    private ArrayList<MinesweeperCell> mines = new ArrayList<>();
+    private boolean firstMove = true;
     
     
     Minesweeper(Canvas canvas, int width, int height) {
@@ -80,6 +80,19 @@ public class Minesweeper implements GameModule {
     }
     
     @Override
+    public void drawStartingGrid() {
+        this.gc.setFill(Color.CADETBLUE);
+        this.gc.fillRect(UPPER_LEFT_X, UPPER_LEFT_Y, CELL_SIZE*WIDTH, CELL_SIZE*HEIGHT);
+        this.gc.setStroke(Color.BLACK);
+        for (int i = UPPER_LEFT_X; i <= LOWER_RIGHT_X; i+=CELL_SIZE) {
+            this.gc.strokeLine(i, UPPER_LEFT_Y, i, LOWER_RIGHT_Y);
+        }
+        for (int i = UPPER_LEFT_Y; i <= LOWER_RIGHT_Y; i+=CELL_SIZE) {
+            this.gc.strokeLine(UPPER_LEFT_X, i, LOWER_RIGHT_X, i);
+        }
+    }
+    
+    @Override
     public void setupEventHandlers() {
         
          this.handler = new EventHandler<MouseEvent>() {
@@ -119,22 +132,9 @@ public class Minesweeper implements GameModule {
     private void disableEventHandler() {
         this.canvas.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.handler);
     }
-    
-    @Override
-    public void drawGameGrid() {
-        this.gc.setFill(Color.CADETBLUE);
-        this.gc.fillRect(UPPER_LEFT_X, UPPER_LEFT_Y, CELL_SIZE*WIDTH, CELL_SIZE*HEIGHT);
-        this.gc.setStroke(Color.BLACK);
-        for (int i = UPPER_LEFT_X; i <= LOWER_RIGHT_X; i+=CELL_SIZE) {
-            this.gc.strokeLine(i, UPPER_LEFT_Y, i, LOWER_RIGHT_Y);
-        }
-        for (int i = UPPER_LEFT_Y; i <= LOWER_RIGHT_Y; i+=CELL_SIZE) {
-            this.gc.strokeLine(UPPER_LEFT_X, i, LOWER_RIGHT_X, i);
-        }
-    }
-     
-    @Override
+         
     public void solve() {
+        mineGameGrid(UPPER_LEFT_X+5, UPPER_LEFT_Y+5);
         MinesweeperCell currentCell;
         for (int i = 0; i < this.gameGrid.length; i++) {
             for (int j = 0; j < this.gameGrid[0].length; j++) {
