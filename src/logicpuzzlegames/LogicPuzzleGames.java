@@ -23,8 +23,7 @@ public class LogicPuzzleGames extends Application {
         stage = primaryStage;
         root = new BorderPane();
         root.setPrefSize(400, 400);
-        
-        
+               
         MenuBar menuBar = setupMenuBar();        
         root.setTop(menuBar);
 
@@ -64,11 +63,7 @@ public class LogicPuzzleGames extends Application {
                     Canvas canvas = new Canvas(canvasWidth, canvasHeight);
                     root.setCenter(canvas);
 
-                    GameModule game = new Minesweeper(canvas, gameWidth, gameHeight);
-                    game.initializeGameGrid();
-                    game.drawStartingGrid();
-                    game.setupEventHandlers();
-                    //((Minesweeper)game).solve();
+                    loadGameModule(new Minesweeper(canvas, gameWidth, gameHeight));
                 }
             });    
     }
@@ -92,16 +87,20 @@ public class LogicPuzzleGames extends Application {
             public void handle(ActionEvent e) {
                 resizeStage(400, 400);
                 Canvas canvas = new Canvas(350, 350);
+                canvas.setFocusTraversable(true);
                 root.setCenter(canvas);
                 
                 String test = "379000014060010070080009005435007000090040020000800436900700080040080050850000249";
-                System.out.println(test.length());
-                GameModule game = new Sudoku(canvas, test);
-                game.initializeGameGrid();
-                game.drawStartingGrid();
-                //game.setupEventHandlers();
+                loadGameModule(new Sudoku(canvas, test));
             }
         });
+    }
+    
+    private void loadGameModule(GameModule game) {
+        game.initializeGameGrid();
+        game.drawStartingGrid();
+        game.setupEventHandlers();
+        //((Minesweeper)game).solve();
     }
     
     private void resizeStage(int width, int height) {
