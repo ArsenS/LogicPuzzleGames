@@ -3,26 +3,15 @@ package logicpuzzlegames;
 import java.util.ArrayList;
 import javafx.event.EventHandler;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 
 
-public class Minesweeper implements GameModule {
+public class Minesweeper extends GameModule {
     
-    //Game grid coordinates and size constants for drawing to canvas
-    //Upper left X,Y coordinates must be multiples of cell size to prevent misalignment
-    final int UPPER_LEFT_X = 30; 
-    final int UPPER_LEFT_Y = 30; 
-    final int CELL_SIZE = 30;
     final int LOWER_RIGHT_X, LOWER_RIGHT_Y;
     final int WIDTH, HEIGHT;
     
-    
-    private Canvas canvas;
-    private GraphicsContext gc;
     private EventHandler<MouseEvent> handler;
     private MinesweeperCell[][] gameGrid;
     private ArrayList<MinesweeperCell> mines = new ArrayList<>();
@@ -30,8 +19,7 @@ public class Minesweeper implements GameModule {
     
     
     Minesweeper(Canvas canvas, int width, int height) {
-        this.canvas = canvas;
-        this.gc = canvas.getGraphicsContext2D();
+        super(canvas);
         WIDTH = width;
         HEIGHT = height;
         LOWER_RIGHT_X = UPPER_LEFT_X + (CELL_SIZE * WIDTH);
@@ -108,7 +96,6 @@ public class Minesweeper implements GameModule {
                     
                     if (e.isPrimaryButtonDown()) {
                         revealCell(e.getX(), e.getY());
-                        //System.out.println(e.getX()+","+e.getY());
                     } else if (e.isSecondaryButtonDown()) {
                         flagCell(e.getX(), e.getY());
                     }
@@ -237,11 +224,5 @@ public class Minesweeper implements GameModule {
             }
         }
         return false;
-    }
-    
-    private void displayEndOfGameText(String message) {
-        this.gc.setStroke(Color.BLACK);
-        this.gc.setFont(Font.font("Verdana", FontWeight.BOLD, 25));
-        this.gc.strokeText(message, 25, 25);
     }
 }

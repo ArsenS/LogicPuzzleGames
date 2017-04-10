@@ -3,12 +3,17 @@ package logicpuzzlegames;
 
 public class MinesweeperCell {
     
-    private boolean revealed = false;
-    private boolean mined = false;
-    private boolean flagged = false;
-    private int numAdjacentMines = 0;
+    private boolean revealed;
+    private boolean mined;
+    private boolean flagged;
+    private int numAdjacentMines;
     
-    MinesweeperCell() {};
+    MinesweeperCell() {
+        this.revealed = false;
+        this.mined = false;
+        this.flagged = false;
+        this.numAdjacentMines = 0;
+    };
     
     public boolean isRevealed() {
         return this.revealed;

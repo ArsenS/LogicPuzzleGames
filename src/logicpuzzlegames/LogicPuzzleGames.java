@@ -3,8 +3,11 @@ package logicpuzzlegames;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -16,7 +19,7 @@ public class LogicPuzzleGames extends Application {
     
     Stage stage;
     BorderPane root;
-    
+    GameModule game;
     @Override
     public void start(Stage primaryStage) {
         
@@ -24,9 +27,8 @@ public class LogicPuzzleGames extends Application {
         root = new BorderPane();
         root.setPrefSize(400, 400);
                
-        MenuBar menuBar = setupMenuBar();        
+        MenuBar menuBar = setupMenuBar();
         root.setTop(menuBar);
-
         stage.setTitle("Logic Puzzle Games"); 
         stage.setScene(new Scene(root));
         stage.show();
@@ -78,6 +80,25 @@ public class LogicPuzzleGames extends Application {
         setupSudokuMenuEventHandler(sudokuMenu);
         return sudokuMenu;
     }
+    
+    private void setupSudokuButton() {
+        Button validateBtn = new Button("Validate");
+        validateBtn.setFocusTraversable(false);
+        root.setBottom(validateBtn);
+        root.setAlignment(validateBtn, Pos.CENTER);
+        root.setMargin(validateBtn, new Insets(0, 0, 50, 0));
+        setupButtonEventHandler(validateBtn);
+    }
+    
+    private void setupButtonEventHandler(Button btn) {
+        btn.setOnAction(new EventHandler<ActionEvent>() {
+            
+            @Override
+            public void handle(ActionEvent e) {
+                System.out.println(((Sudoku)game).validateSolution());
+            }
+        });
+    }
 
     
     private void setupSudokuMenuEventHandler(MenuItem newSudokuGame) {
@@ -85,10 +106,11 @@ public class LogicPuzzleGames extends Application {
             
             @Override
             public void handle(ActionEvent e) {
-                resizeStage(400, 400);
+                resizeStage(400, 450);
                 Canvas canvas = new Canvas(350, 350);
                 canvas.setFocusTraversable(true);
                 root.setCenter(canvas);
+                setupSudokuButton();
                 
                 String test = "379000014060010070080009005435007000090040020000800436900700080040080050850000249";
                 loadGameModule(new Sudoku(canvas, test));
@@ -96,7 +118,8 @@ public class LogicPuzzleGames extends Application {
         });
     }
     
-    private void loadGameModule(GameModule game) {
+    private void loadGameModule(GameModule gameModule) {
+        game = gameModule;
         game.initializeGameGrid();
         game.drawStartingGrid();
         game.setupEventHandlers();
