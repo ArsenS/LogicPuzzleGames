@@ -6,6 +6,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 
 
 public class Sudoku extends GameModule {
@@ -21,9 +23,7 @@ public class Sudoku extends GameModule {
     private EventHandler<KeyEvent> keyHandler;
     private final String startingLayout;
     private SudokuCell[][] gameGrid;
-    
     private SudokuCell currentCell;
-    private int currentCellX, currentCellY;
     
     Sudoku (Canvas canvas, String startingLayout) {
         super(canvas);
@@ -125,27 +125,21 @@ public class Sudoku extends GameModule {
     private boolean isWithinGrid(double x, double y) {
         return (x > UPPER_LEFT_X && x < LOWER_RIGHT_X && y > UPPER_LEFT_Y && y < LOWER_RIGHT_Y);
     }
-    /*
-    private boolean isWithinArray(int x, int y) {
-        return (x >= 0 && y >= 0 && x < this.gameGrid.length && y < this.gameGrid[0].length);
-    }
-    */
+
     private void selectCell(double x, double y) {
         
         SudokuCell clickedCell = getClickedCell(x, y);
         if (clickedCell.isEditable()) {
-            
+            clickedCell.setXY((int) (x - (x%CELL_SIZE)), (int) (y - (y%CELL_SIZE)));
             if (this.currentCell != null) {
-                deselectCell(this.currentCellX, this.currentCellY);    
+                deselectCell(this.currentCell.getX(), this.currentCell.getY());
             }
             if (clickedCell == this.currentCell) {
                 this.currentCell = null;
             } else {
                 this.currentCell = clickedCell;
-                this.currentCellX = (int) (x - (x%CELL_SIZE));
-                this.currentCellY = (int) (y - (y%CELL_SIZE));
                 this.gc.setStroke(Color.BLUE);
-                this.gc.strokeRect(currentCellX+3, currentCellY+3, CELL_SIZE-6, CELL_SIZE-6);
+                this.gc.strokeRect(this.currentCell.getX()+3, this.currentCell.getY()+3, CELL_SIZE-6, CELL_SIZE-6);
             }   
         }
     }
@@ -155,19 +149,17 @@ public class Sudoku extends GameModule {
     }
     
     private void deselectCell(double x, double y) {
-        this.gc.clearRect(currentCellX+2, currentCellY+2, CELL_SIZE-4, CELL_SIZE-4);
-        rewriteCellValue(this.currentCellX, this.currentCellY);
-        this.currentCellX = 0;
-        this.currentCellY = 0;
+        this.gc.clearRect(x+2, y+2, CELL_SIZE-4, CELL_SIZE-4);
+        rewriteCellValue(this.currentCell.getX(), this.currentCell.getY());
     }
     
     public void writeToCurrentCell(int value) {
         this.currentCell.setValue(value);
-        rewriteCellValue(this.currentCellX, this.currentCellY);
+        rewriteCellValue(this.currentCell.getX(), this.currentCell.getY());
     }
     
     private void rewriteCellValue(double x, double y) {
-        this.gc.clearRect(currentCellX+5, currentCellY+5, CELL_SIZE-10, CELL_SIZE-10);
+        this.gc.clearRect(this.currentCell.getX()+5, this.currentCell.getY()+5, CELL_SIZE-10, CELL_SIZE-10);
         SudokuCell cellToFill = getClickedCell(x, y);
         if (cellToFill.getValue() > 0) {
             this.gc.setStroke(Color.BLUE);
@@ -185,10 +177,13 @@ public class Sudoku extends GameModule {
             displayEndOfGameText("You win!");
             disableEventHandlers();
         }
+        if (valid) {
+            eraseErrorText();
+        } else drawErrorText();
         return valid;
     }
     
-    private boolean validateAllRows() {
+    private boolean validateAllCols() {
         for (int i = 0; i < this.gameGrid.length; i++) {
             if (!validateRow(i)) {
                 return false;
@@ -197,7 +192,7 @@ public class Sudoku extends GameModule {
         return true;
     }
     
-    private boolean validateRow(int i) {
+    private boolean validateCol(int i) {
         
         BitSet row = new BitSet(10);
         for (SudokuCell cell: this.gameGrid[i]) {
@@ -212,7 +207,7 @@ public class Sudoku extends GameModule {
         return true;        
     }
     
-    private boolean validateAllCols() {
+    private boolean validateAllRows() {
         for (int j = 0; j < this.gameGrid[0].length; j++) {
             if (!validateCol(j)) {
                 return false;
@@ -221,7 +216,7 @@ public class Sudoku extends GameModule {
         return true;
     }
     
-    private boolean validateCol(int j) {
+    private boolean validateRow(int j) {
         BitSet col = new BitSet(10);
         for (SudokuCell[] row: this.gameGrid) {
             int cellValue = row[j].getValue();
@@ -260,5 +255,15 @@ public class Sudoku extends GameModule {
             }
         }
         return true;
+    }
+    
+    private void drawErrorText() {
+        this.gc.setStroke(Color.FIREBRICK);
+        this.gc.setFont(Font.font("Arial", FontWeight.LIGHT, 15));
+        this.gc.strokeText("There are errors in the solution.", 25, 25);
+    }
+    
+    private void eraseErrorText() {
+        this.gc.clearRect(0, 0, 300, 27);
     }
 }
