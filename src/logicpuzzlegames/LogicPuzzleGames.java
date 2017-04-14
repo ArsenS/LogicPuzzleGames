@@ -1,5 +1,14 @@
 package logicpuzzlegames;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Random;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -72,12 +81,15 @@ public class LogicPuzzleGames extends Application {
     
     private MenuItem setupSudokuMenu() {
         Menu sudokuMenu = new Menu("New Sudoku Game");
-        MenuItem newEasySudokuGame = new MenuItem("Easy");
-        MenuItem newMediumSudokuGame = new MenuItem("Medium");
-        MenuItem newHardSudokuGame = new MenuItem("Hard");
-        MenuItem newVeryHardSudokuGame = new MenuItem("Very Hard");
-        sudokuMenu.getItems().addAll(newEasySudokuGame, newMediumSudokuGame, newHardSudokuGame, newVeryHardSudokuGame);
-        setupSudokuMenuEventHandler(sudokuMenu);
+        MenuItem newEasyGame = new MenuItem("Easy");
+        setupSudokuMenuEventHandler(newEasyGame);
+        MenuItem newMediumGame = new MenuItem("Medium");
+        setupSudokuMenuEventHandler(newMediumGame);
+        MenuItem newHardGame = new MenuItem("Hard");
+        setupSudokuMenuEventHandler(newHardGame);
+        MenuItem newVeryHardGame = new MenuItem("Very Hard");
+        setupSudokuMenuEventHandler(newVeryHardGame);
+        sudokuMenu.getItems().addAll(newEasyGame, newMediumGame, newHardGame, newVeryHardGame);
         return sudokuMenu;
     }
     
@@ -101,8 +113,8 @@ public class LogicPuzzleGames extends Application {
     }
 
     
-    private void setupSudokuMenuEventHandler(MenuItem newSudokuGame) {
-        newSudokuGame.setOnAction(new EventHandler<ActionEvent>() {
+    private void setupSudokuMenuEventHandler(MenuItem selectedDifficulty) {
+        selectedDifficulty.setOnAction(new EventHandler<ActionEvent>() {
             
             @Override
             public void handle(ActionEvent e) {
@@ -112,10 +124,34 @@ public class LogicPuzzleGames extends Application {
                 root.setCenter(canvas);
                 setupSudokuButton();
                 
-                String test = "379000014060010070080009005435007000090040020000800436900700080040080050850000249";
-                loadGameModule(new Sudoku(canvas, test));
+                String startLayout = getRandomStartLayout(selectedDifficulty.getText());
+                //String test = "379000014060010070080009005435007000090040020000800436900700080040080050850000249";
+                loadGameModule(new Sudoku(canvas, startLayout));
             }
         });
+    }
+    
+    private String getRandomStartLayout(String difficulty) {
+        
+        Random rand = new Random();
+        int selectedLayout = rand.nextInt(100);
+        String sudokuLayout = "";
+        String file = System.getProperty("user.dir")+"\\src\\logicpuzzlegames\\sudoku_config\\"+difficulty+".txt";
+        Path filePath = Paths.get(file);
+        
+        try (InputStream in = Files.newInputStream(filePath);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                selectedLayout--;
+                if (selectedLayout == 0) {
+                    sudokuLayout = line;
+                }
+            }
+        } catch (IOException x) {
+            System.err.println(x);
+        }
+        return sudokuLayout;
     }
     
     private void loadGameModule(GameModule gameModule) {

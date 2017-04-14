@@ -9,8 +9,9 @@ import javafx.scene.paint.Color;
 
 public class Minesweeper extends GameModule {
     
-    final int LOWER_RIGHT_X, LOWER_RIGHT_Y;
+    //Size and position constants for drawing to canvas
     final int WIDTH, HEIGHT;
+    final int LOWER_RIGHT_X, LOWER_RIGHT_Y;
     
     private EventHandler<MouseEvent> handler;
     private MinesweeperCell[][] gameGrid;

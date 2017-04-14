@@ -13,8 +13,7 @@ import javafx.scene.text.FontWeight;
 public class Sudoku extends GameModule {
     
     
-    //Game grid coordinates and size constants for drawing to canvas
-    //Upper left X,Y coordinates must be multiples of cell size to prevent misalignment
+    //Size and position constants for drawing to canvas
     final int WIDTH = 9;
     final int HEIGHT = 9;
     final int LOWER_RIGHT_X, LOWER_RIGHT_Y;
@@ -61,6 +60,7 @@ public class Sudoku extends GameModule {
                 this.gc.strokeLine(UPPER_LEFT_Y, i, LOWER_RIGHT_Y, i);
             }
         }
+        this.gc.setFont(Font.font("Century Gothic", FontWeight.LIGHT, 18));
         for (int i = 0; i < WIDTH; i++) {
             for (int j = 0; j < HEIGHT; j++) {
                 int cellValue = this.gameGrid[i][j].getValue();
@@ -84,7 +84,6 @@ public class Sudoku extends GameModule {
                 }
             }
         };
-        
         this.keyHandler = new EventHandler<KeyEvent>() {
             
             @Override
@@ -95,13 +94,11 @@ public class Sudoku extends GameModule {
                         int typedValue = Integer.parseInt(e.getCharacter()); 
                         writeToCurrentCell(typedValue);
                     }
-                    
                 } catch (NumberFormatException nfe) {
                     System.out.println("NaN");
                 }
             }
         };
-        
         this.canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, this.mouseHandler);
         this.canvas.addEventHandler(KeyEvent.KEY_TYPED, this.keyHandler);
     }
@@ -127,7 +124,6 @@ public class Sudoku extends GameModule {
     }
 
     private void selectCell(double x, double y) {
-        
         SudokuCell clickedCell = getClickedCell(x, y);
         if (clickedCell.isEditable()) {
             clickedCell.setXY((int) (x - (x%CELL_SIZE)), (int) (y - (y%CELL_SIZE)));
@@ -163,6 +159,7 @@ public class Sudoku extends GameModule {
         SudokuCell cellToFill = getClickedCell(x, y);
         if (cellToFill.getValue() > 0) {
             this.gc.setStroke(Color.BLUE);
+            this.gc.setFont(Font.font("Century Gothic", FontWeight.LIGHT, 18));
             this.gc.strokeText(Integer.toString(cellToFill.getValue()), x+10, y+20);   
         }
     }
@@ -193,7 +190,6 @@ public class Sudoku extends GameModule {
     }
     
     private boolean validateCol(int i) {
-        
         BitSet row = new BitSet(10);
         for (SudokuCell cell: this.gameGrid[i]) {
             int cellValue = cell.getValue();
@@ -258,12 +254,13 @@ public class Sudoku extends GameModule {
     }
     
     private void drawErrorText() {
+        eraseErrorText();
         this.gc.setStroke(Color.FIREBRICK);
-        this.gc.setFont(Font.font("Arial", FontWeight.LIGHT, 15));
-        this.gc.strokeText("There are errors in the solution.", 25, 25);
+        this.gc.setFont(Font.font("Century Gothic", FontWeight.LIGHT, 20));
+        this.gc.strokeText("There are errors in the solution.", 25, 335);
     }
     
     private void eraseErrorText() {
-        this.gc.clearRect(0, 0, 300, 27);
+        this.gc.clearRect(0, 310, 320, 30);
     }
 }
