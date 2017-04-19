@@ -1,14 +1,5 @@
 package logicpuzzlegames;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Random;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -29,6 +20,7 @@ public class LogicPuzzleGames extends Application {
     Stage stage;
     BorderPane root;
     GameModule game;
+    
     @Override
     public void start(Stage primaryStage) {
         
@@ -123,42 +115,19 @@ public class LogicPuzzleGames extends Application {
                 canvas.setFocusTraversable(true);
                 root.setCenter(canvas);
                 setupSudokuButton();
-                
-                String startLayout = getRandomStartLayout(selectedDifficulty.getText());
-                //String test = "379000014060010070080009005435007000090040020000800436900700080040080050850000249";
-                loadGameModule(new Sudoku(canvas, startLayout));
+
+                loadGameModule(new Sudoku(canvas, selectedDifficulty.getText()));
             }
         });
     }
-    
-    private String getRandomStartLayout(String difficulty) {
-        
-        Random rand = new Random();
-        int selectedLayout = rand.nextInt(100);
-        String sudokuLayout = "";
-        String file = System.getProperty("user.dir")+"\\src\\logicpuzzlegames\\sudoku_config\\"+difficulty+".txt";
-        Path filePath = Paths.get(file);
-        
-        try (InputStream in = Files.newInputStream(filePath);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
-            String line = null;
-            while ((line = reader.readLine()) != null) {
-                selectedLayout--;
-                if (selectedLayout == 0) {
-                    sudokuLayout = line;
-                }
-            }
-        } catch (IOException x) {
-            System.err.println(x);
-        }
-        return sudokuLayout;
-    }
-    
+     
     private void loadGameModule(GameModule gameModule) {
         game = gameModule;
         game.initializeGameGrid();
         game.drawStartingGrid();
         game.setupEventHandlers();
+        
+        // debugging function for Minesweeper module
         //((Minesweeper)game).solve();
     }
     
@@ -167,9 +136,6 @@ public class LogicPuzzleGames extends Application {
         this.stage.setHeight(height);
     }
     
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) {
         launch(args);
     }

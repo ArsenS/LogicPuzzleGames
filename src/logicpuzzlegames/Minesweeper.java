@@ -15,7 +15,7 @@ public class Minesweeper extends GameModule {
     
     private EventHandler<MouseEvent> handler;
     private MinesweeperCell[][] gameGrid;
-    private ArrayList<MinesweeperCell> mines = new ArrayList<>();
+    private final ArrayList<MinesweeperCell> mines = new ArrayList<>();
     private boolean firstMove = true;
     
     
@@ -39,7 +39,6 @@ public class Minesweeper extends GameModule {
     
     private void mineGameGrid(double x, double y) {
         int minesRemaining = (int) (WIDTH * HEIGHT * 0.15);
-        System.out.println(minesRemaining+" mines to place.");
         MinesweeperCell firstCellClicked = getCurrentCell(x, y);
         while (minesRemaining > 0) {
             for (int i = 0; i < this.gameGrid.length; i++) {
@@ -55,7 +54,6 @@ public class Minesweeper extends GameModule {
                 }
             }   
         }
-        System.out.println(minesRemaining+" mines remaining.");
     }
     
     private void incrementNeighborsCounter(int minedCellI, int minedCellJ) {
@@ -121,6 +119,7 @@ public class Minesweeper extends GameModule {
         this.canvas.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.handler);
     }
          
+    //debugging function
     public void solve() {
         mineGameGrid(UPPER_LEFT_X+5, UPPER_LEFT_Y+5);
         MinesweeperCell currentCell;

@@ -1,6 +1,14 @@
 package logicpuzzlegames;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.BitSet;
+import java.util.Random;
 import javafx.event.EventHandler;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.KeyEvent;
@@ -20,13 +28,13 @@ public class Sudoku extends GameModule {
     
     private EventHandler<MouseEvent> mouseHandler;
     private EventHandler<KeyEvent> keyHandler;
-    private final String startingLayout;
+    private final String difficulty;
     private SudokuCell[][] gameGrid;
     private SudokuCell currentCell;
     
-    Sudoku (Canvas canvas, String startingLayout) {
+    Sudoku (Canvas canvas, String difficulty) {
         super(canvas);
-        this.startingLayout = startingLayout;
+        this.difficulty = difficulty;
         LOWER_RIGHT_X = UPPER_LEFT_X + (HEIGHT * CELL_SIZE);
         LOWER_RIGHT_Y = UPPER_LEFT_Y + (WIDTH * CELL_SIZE);
     }
@@ -34,9 +42,10 @@ public class Sudoku extends GameModule {
     @Override
     public void initializeGameGrid() {
         this.gameGrid = new SudokuCell[WIDTH][HEIGHT];
+        String startingLayout = getRandomStartingLayout(this.difficulty);
         for (int i = 0; i < this.gameGrid.length; i++) {
             for (int j = 0; j < this.gameGrid[0].length; j++) {
-                char currentValue = this.startingLayout.charAt(i*9+j);
+                char currentValue = startingLayout.charAt(i*9+j);
                 if (currentValue == '0') {
                     this.gameGrid[i][j] = new SudokuCell();
                 } else {
@@ -45,6 +54,30 @@ public class Sudoku extends GameModule {
             }
         }
     };
+    
+        private String getRandomStartingLayout(String difficulty) {
+        
+        Random rand = new Random();
+        int selectedLayout = rand.nextInt(100);
+        String sudokuLayout = "";
+        String file = System.getProperty("user.dir")+"\\src\\logicpuzzlegames\\sudoku_config\\"+difficulty+".txt";
+        Path filePath = Paths.get(file);
+        
+        try (
+            InputStream in = Files.newInputStream(filePath);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+                String line = null;
+                while ((line = reader.readLine()) != null) {
+                    selectedLayout--;
+                    if (selectedLayout == 0) {
+                        sudokuLayout = line;
+                    }
+                }
+        } catch (IOException e) {
+            System.err.println(e);
+        }
+        return sudokuLayout;
+    }
     
     @Override
     public void drawStartingGrid() {
@@ -73,7 +106,6 @@ public class Sudoku extends GameModule {
     
     @Override
     public void setupEventHandlers() {
-        
         this.mouseHandler = new EventHandler<MouseEvent>() {
             
             @Override
@@ -103,6 +135,12 @@ public class Sudoku extends GameModule {
         this.canvas.addEventHandler(KeyEvent.KEY_TYPED, this.keyHandler);
     }
     
+    private void disableEventHandlers() {
+        this.canvas.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.mouseHandler);
+        this.canvas.removeEventHandler(KeyEvent.KEY_TYPED, this.keyHandler);
+    }
+    
+    
     private boolean gridIsFull() {
         for (int i = 0; i < this.gameGrid.length; i++) {
             for (int j = 0; j < this.gameGrid[0].length; j++) {
@@ -112,13 +150,8 @@ public class Sudoku extends GameModule {
             }
         }
         return true;
-    }
-    
-    private void disableEventHandlers() {
-        this.canvas.removeEventHandler(MouseEvent.MOUSE_PRESSED, this.mouseHandler);
-        this.canvas.removeEventHandler(KeyEvent.KEY_TYPED, this.keyHandler);
-    }
-    
+    }   
+
     private boolean isWithinGrid(double x, double y) {
         return (x > UPPER_LEFT_X && x < LOWER_RIGHT_X && y > UPPER_LEFT_Y && y < LOWER_RIGHT_Y);
     }
